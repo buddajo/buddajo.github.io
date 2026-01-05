@@ -3,421 +3,683 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Archie Manarang | Senior Shopify Developer</title>
+    <title>Archie Manarang | Shopify Developer</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <style>
-        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&display=swap');
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');
         
+        :root {
+            --shopify-indigo: #002e62;
+            --shopify-green: #008060;
+            --shopify-light-green: #f1f8f5;
+            --polaris-bg: #f6f6f7;
+            --polaris-border: #e1e3e5;
+        }
+
         body {
             font-family: 'Inter', sans-serif;
             scroll-behavior: smooth;
+            background-color: white;
+            color: #202223;
+            overflow-x: hidden;
         }
 
-        /* Prevent sections from being hidden under the fixed header when scrolling */
+        /* Shopify-like Polaris Card */
+        .polaris-card {
+            background: white;
+            border: 1px solid var(--polaris-border);
+            border-radius: 12px;
+            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
+            transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        .polaris-card:hover {
+            border-color: #abb1b7;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+        }
+
         section[id] {
             scroll-margin-top: 80px;
         }
 
         .glass-nav {
-            background: rgba(255, 255, 255, 0.8);
-            backdrop-filter: blur(10px);
-            border-bottom: 1px solid rgba(0, 0, 0, 0.05);
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(8px);
+            border-bottom: 1px solid var(--polaris-border);
         }
 
-        .hero-gradient {
-            background: radial-gradient(circle at top right, #f0f4ff 0%, #ffffff 100%);
-        }
-
-        .skill-tag {
-            background: #f3f4f6;
-            transition: all 0.3s ease;
-        }
-
-        .skill-tag:hover {
-            background: #4f46e5;
-            color: white;
-            transform: translateY(-2px);
-        }
-
-        .project-card {
-            transition: transform 0.3s ease, box-shadow 0.3s ease;
-            display: flex;
-            flex-direction: column;
-            height: 100%;
-        }
-
-        .project-card:hover {
-            transform: translateY(-5px);
-            box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
-        }
-
-        /* Scroll Spy Active State */
         .nav-link.active {
-            color: #4f46e5; /* indigo-600 */
-            font-weight: 700;
+            color: var(--shopify-green);
+            font-weight: 600;
         }
 
-        .shopify-color { color: #95bf47; }
-        
+        .btn-shopify {
+            background-color: var(--shopify-green);
+            color: white;
+            transition: background-color 0.2s;
+        }
+
+        .btn-shopify:hover {
+            background-color: #006e52;
+        }
+
+        .badge-plus {
+            background: linear-gradient(135deg, #002e62 0%, #004b93 100%);
+            color: white;
+        }
+
+        /* Pop-out Modal Styles */
+        .modal {
+            display: flex;
+            position: fixed;
+            z-index: 1000;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(32, 34, 35, 0.6);
+            backdrop-filter: blur(4px);
+            align-items: center;
+            justify-content: center;
+            padding: 1rem;
+            opacity: 0;
+            visibility: hidden;
+            transition: opacity 0.3s ease, visibility 0.3s ease;
+        }
+
+        .modal.active {
+            opacity: 1;
+            visibility: visible;
+        }
+
+        .modal-content {
+            background-color: #fff;
+            border-radius: 12px;
+            width: 100%;
+            max-width: 600px;
+            max-height: 90vh;
+            overflow-y: auto;
+            position: relative;
+            box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1);
+            transform: scale(0.85) translateY(20px);
+            opacity: 0;
+            transition: transform 0.4s cubic-bezier(0.34, 1.56, 0.64, 1), opacity 0.3s ease;
+        }
+
+        .modal.active .modal-content {
+            transform: scale(1) translateY(0);
+            opacity: 1;
+        }
+
+        /* Mobile Menu */
+        #mobile-menu.hidden {
+            display: none;
+        }
+        #mobile-menu {
+            display: flex;
+            animation: fadeIn 0.2s ease-out;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(-10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
         /* Custom Scrollbar */
-        ::-webkit-scrollbar { width: 8px; }
-        ::-webkit-scrollbar-track { background: #f1f1f1; }
-        ::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 10px; }
-        ::-webkit-scrollbar-thumb:hover { background: #94a3b8; }
+        ::-webkit-scrollbar { width: 6px; }
+        ::-webkit-scrollbar-track { background: var(--polaris-bg); }
+        ::-webkit-scrollbar-thumb { background: #c9cccf; border-radius: 10px; }
     </style>
 </head>
-<body class="text-slate-900 bg-white">
+<body class="antialiased">
 
     <!-- Navigation -->
     <nav class="fixed w-full z-50 glass-nav">
-        <div class="max-w-6xl mx-auto px-6 py-4 flex justify-between items-center">
-            <a href="#" class="text-xl font-bold tracking-tight">ARCHIE<span class="text-indigo-600">.</span></a>
-            <div id="nav-menu" class="hidden md:flex space-x-8 font-medium text-sm text-slate-600">
-                <a href="#about" class="nav-link hover:text-indigo-600 transition">About</a>
-                <a href="#projects" class="nav-link hover:text-indigo-600 transition">Projects</a>
-                <a href="#skills" class="nav-link hover:text-indigo-600 transition">Skills</a>
-                <a href="#experience" class="nav-link hover:text-indigo-600 transition">Experience</a>
-                <a href="mailto:manarangarchie@gmail.com" class="text-indigo-600 font-bold">Contact</a>
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 py-4 flex justify-between items-center">
+            <div class="flex items-center gap-2">
+                <!-- Logo with Conditional Fallback -->
+                <div id="brand-logo-container" class="relative w-8 h-8">
+                    <!-- Default Text A -->
+                    <div id="logo-fallback" class="w-8 h-8 bg-indigo-900 rounded-lg flex items-center justify-center text-white font-bold text-lg">A</div>
+                    <!-- Real Logo (hidden by default) -->
+                    <img id="custom-logo" src="logo.png" alt="Archie" class="absolute inset-0 w-8 h-8 rounded-lg object-contain hidden">
+                </div>
+                <span class="text-base sm:text-lg font-semibold tracking-tight">Archie Manarang</span>
             </div>
-            <div class="md:hidden">
-                <i class="fas fa-bars text-xl cursor-pointer"></i>
+            
+            <div id="desktop-menu" class="hidden md:flex space-x-8 text-[11px] lg:text-[13px] font-medium text-slate-500 uppercase tracking-wider">
+                <a href="#about" class="nav-link hover:text-green-700 transition">About</a>
+                <a href="#projects" class="nav-link hover:text-green-700 transition">Work</a>
+                <a href="#skills" class="nav-link hover:text-green-700 transition">Arsenal</a>
+                <a href="#experience" class="nav-link hover:text-green-700 transition">History</a>
             </div>
+
+            <div class="flex items-center gap-2 sm:gap-4">
+                <a href="mailto:manarangarchie@gmail.com" class="btn-shopify px-4 sm:px-5 py-2 rounded-lg font-medium text-xs sm:text-sm whitespace-nowrap">Hire Me</a>
+                <button id="menu-toggle" class="md:hidden p-2 text-slate-600 focus:outline-none">
+                    <i class="fas fa-bars text-xl"></i>
+                </button>
+            </div>
+        </div>
+
+        <!-- Mobile Menu Dropdown -->
+        <div id="mobile-menu" class="hidden md:hidden flex-col bg-white border-b border-slate-200 px-4 py-6 space-y-4 shadow-xl">
+            <a href="#about" class="mobile-nav-link text-sm font-semibold text-slate-600 uppercase tracking-widest">About</a>
+            <a href="#projects" class="mobile-nav-link text-sm font-semibold text-slate-600 uppercase tracking-widest">Work</a>
+            <a href="#skills" class="mobile-nav-link text-sm font-semibold text-slate-600 uppercase tracking-widest">Arsenal</a>
+            <a href="#experience" class="mobile-nav-link text-sm font-semibold text-slate-600 uppercase tracking-widest">History</a>
+            <hr class="border-slate-100">
+            <a href="https://www.upwork.com/freelancers/archiemanarang4" target="_blank" class="text-sm font-bold text-[#14a800] flex items-center gap-2">
+                <i class="fab fa-upwork"></i> UPWORK PROFILE
+            </a>
         </div>
     </nav>
 
     <!-- Hero Section -->
-    <section class="pt-32 pb-20 px-6 hero-gradient">
-        <div class="max-w-6xl mx-auto flex flex-col md:flex-row items-center justify-between">
-            <div class="md:w-3/5">
-                <span class="inline-block px-4 py-1.5 mb-6 text-xs font-bold tracking-widest text-indigo-600 uppercase bg-indigo-50 rounded-full">
-                    Available for Freelance
-                </span>
-                <h1 class="text-5xl md:text-7xl font-bold leading-tight mb-6">
-                    Building elite <br/><span class="text-indigo-600">Shopify</span> experiences.
+    <section class="pt-28 sm:pt-40 pb-16 sm:pb-24 px-4 sm:px-6 bg-[#f6f6f7]">
+        <div class="max-w-7xl mx-auto grid lg:grid-cols-2 gap-12 items-center">
+            <div class="text-center lg:text-left order-2 lg:order-1">
+                <div class="flex flex-wrap items-center justify-center lg:justify-start gap-3 mb-6">
+                    <span class="badge-plus px-3 py-1 rounded text-[10px] font-black uppercase tracking-widest">Shopify Expert</span>
+                    <span class="text-slate-400 text-xs font-medium border-l border-slate-300 pl-3">10+ Years Experience</span>
+                </div>
+                <h1 class="text-4xl sm:text-5xl md:text-6xl font-bold text-slate-900 leading-[1.1] mb-6 sm:mb-8">
+                    Scale your store with <span class="text-emerald-700">merchant-first</span> code.
                 </h1>
-                <p class="text-lg text-slate-600 mb-8 max-w-lg leading-relaxed">
-                    10+ years of experience crafting high-converting, performance-optimized e-commerce stores for global brands. Expert in Liquid, Shopify Plus, and custom theme development.
+                <p class="text-lg sm:text-xl text-slate-600 mb-8 sm:mb-10 max-w-xl mx-auto lg:mx-0 leading-relaxed">
+                    Senior Developer specializing in Liquid architecture, high-conversion storefronts, and enterprise performance. Helping 50+ global brands dominate digital retail.
                 </p>
-                <div class="flex flex-wrap gap-4">
-                    <a href="#projects" class="bg-indigo-600 text-white px-8 py-4 rounded-xl font-semibold hover:bg-indigo-700 transition shadow-lg shadow-indigo-200">
-                        View Work
+                <div class="flex flex-col sm:flex-row flex-wrap justify-center lg:justify-start gap-4">
+                    <a href="#projects" class="bg-indigo-900 text-white px-8 py-4 rounded-xl font-semibold hover:bg-slate-800 transition shadow-lg text-center">
+                        Browse Solutions
                     </a>
-                    <a href="resume.pdf" download="Archie_Manarang_Resume.pdf" class="bg-white text-slate-700 border border-slate-200 px-8 py-4 rounded-xl font-semibold hover:bg-slate-50 transition flex items-center gap-2">
-                        <i class="fas fa-download text-sm"></i> Download CV
-                    </a>
-                    <a href="mailto:manarangarchie@gmail.com" class="text-slate-500 px-4 py-4 rounded-xl font-semibold hover:text-indigo-600 transition flex items-center">
-                        Get in Touch
+                    <a href="resume.pdf" download="Archie_Manarang_Resume.pdf" class="bg-white border border-slate-200 text-slate-700 px-8 py-4 rounded-xl font-semibold hover:bg-slate-50 transition flex items-center justify-center gap-2">
+                        Download CV
                     </a>
                 </div>
             </div>
-            <div class="md:w-1/3 mt-16 md:mt-0 relative">
-                <div class="w-64 h-64 md:w-80 md:h-80 bg-indigo-100 rounded-3xl rotate-6 absolute top-0 left-0 -z-10"></div>
-                <div class="w-64 h-64 md:w-80 md:h-80 bg-slate-100 rounded-3xl flex items-center justify-center overflow-hidden border-4 border-white shadow-xl">
-                    <i class="fas fa-code text-6xl text-indigo-300"></i>
+            <div class="relative order-1 lg:order-2 flex justify-center lg:block">
+                <div class="polaris-card p-1 bg-slate-100 overflow-hidden shadow-2xl w-full max-w-md lg:max-w-none">
+                    <div class="bg-white rounded-lg p-6 sm:p-8 grid grid-cols-2 gap-4 sm:gap-6">
+                        <div class="space-y-4">
+                            <div class="h-2 w-16 sm:w-20 bg-emerald-100 rounded"></div>
+                            <div class="h-6 sm:h-8 w-full bg-slate-50 rounded"></div>
+                            <div class="h-24 sm:h-32 w-full bg-slate-50 rounded"></div>
+                        </div>
+                        <div class="space-y-4">
+                            <div class="h-2 w-10 sm:w-12 bg-indigo-100 rounded"></div>
+                            <div class="h-16 sm:h-24 w-full bg-slate-50 rounded"></div>
+                            <div class="h-10 sm:h-12 w-full bg-emerald-600 rounded"></div>
+                        </div>
+                    </div>
+                </div>
+                <div class="absolute -bottom-4 -left-2 sm:-bottom-6 sm:-left-6 bg-white border border-slate-200 p-4 sm:p-6 rounded-2xl shadow-xl hidden sm:block">
+                    <div class="text-2xl sm:text-3xl font-bold text-emerald-700">50+</div>
+                    <div class="text-[10px] text-slate-500 font-bold uppercase tracking-tight">Global Brands Helped</div>
                 </div>
             </div>
         </div>
     </section>
 
-    <!-- Stats Section -->
-    <section class="py-12 border-y border-slate-100 bg-white">
-        <div class="max-w-6xl mx-auto px-6 flex flex-wrap justify-between gap-8">
-            <div class="flex flex-col text-center md:text-left">
-                <span class="text-3xl font-bold">10+</span>
-                <span class="text-sm text-slate-500 uppercase tracking-wider font-semibold">Years Experience</span>
+    <!-- Impact Stats -->
+    <section class="py-12 sm:py-20 border-b border-slate-100">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8 lg:gap-12 text-center lg:text-left">
+            <div>
+                <div class="text-[10px] sm:text-xs font-bold text-slate-400 uppercase mb-1 sm:mb-2">Global Presence</div>
+                <div class="text-3xl sm:text-4xl font-bold text-slate-900">4 <span class="text-emerald-600 text-lg sm:text-xl">Continents</span></div>
             </div>
-            <div class="flex flex-col text-center md:text-left">
-                <span class="text-3xl font-bold">50+</span>
-                <span class="text-sm text-slate-500 uppercase tracking-wider font-semibold">Companies Helped</span>
+            <div>
+                <div class="text-[10px] sm:text-xs font-bold text-slate-400 uppercase mb-1 sm:mb-2">Merchant Experience</div>
+                <div class="text-3xl sm:text-4xl font-bold text-slate-900">10+ <span class="text-emerald-600 text-lg sm:text-xl">Years</span></div>
             </div>
-            <div class="flex flex-col text-center md:text-left">
-                <span class="text-3xl font-bold">4</span>
-                <span class="text-sm text-slate-500 uppercase tracking-wider font-semibold">Continents Served</span>
+            <div>
+                <div class="text-[10px] sm:text-xs font-bold text-slate-400 uppercase mb-1 sm:mb-2">Technical Focus</div>
+                <div class="text-3xl sm:text-4xl font-bold text-slate-900">100% <span class="text-emerald-600 text-lg sm:text-xl">Shopify</span></div>
             </div>
-            <div class="flex flex-col text-center md:text-left">
-                <span class="text-3xl font-bold">100%</span>
-                <span class="text-sm text-slate-500 uppercase tracking-wider font-semibold">Shopify Focused</span>
+            <div>
+                <div class="text-[10px] sm:text-xs font-bold text-slate-400 uppercase mb-1 sm:mb-2">Shopify Tiers</div>
+                <div class="text-3xl sm:text-4xl font-bold text-slate-900">Plus <span class="text-emerald-600 text-lg sm:text-xl">Ready</span></div>
             </div>
         </div>
     </section>
 
     <!-- About Section -->
-    <section id="about" class="py-24 px-6">
-        <div class="max-w-4xl mx-auto">
-            <h2 class="text-3xl font-bold mb-8 text-center md:text-left">About Me</h2>
-            <div class="prose prose-lg text-slate-600 leading-relaxed">
-                <p class="mb-6">
-                    With over a decade of specialized experience in the Shopify ecosystem, I have honed my expertise in front-end technologies including HTML, CSS, JavaScript, and Shopify Liquid. 
-                </p>
-                <p class="mb-6">
-                    I have successfully assisted over 50 companies worldwide—primarily in the <strong>US, UK, Canada, and Australia</strong>. My work ranges from single-product stores to extensive supermarket-scale e-commerce platforms like Puregold.
-                </p>
-                <p>
-                    I am committed to excellence, focusing on website performance optimization, custom API integrations, and creating seamless responsive designs that drive conversion.
-                </p>
-            </div>
+    <section id="about" class="py-20 sm:py-32 px-4 sm:px-6">
+        <div class="max-w-3xl mx-auto text-center">
+            <h2 class="text-2xl sm:text-3xl font-bold mb-6 sm:mb-10">Expertise in Liquid and E-commerce Strategy</h2>
+            <p class="text-lg sm:text-xl text-slate-600 leading-relaxed">
+                Based in Pampanga, Philippines, I’ve spent over a decade translating business goals into high-performance storefronts. From supermarket-scale Shopify Plus stores like <strong>Puregold</strong> to high-growth niche brands in the US, UK, and AU, my code is built for stability and conversion.
+            </p>
         </div>
     </section>
 
     <!-- Projects Grid -->
-    <section id="projects" class="py-24 px-6 bg-slate-50">
-        <div class="max-w-6xl mx-auto">
-            <div class="flex flex-col md:flex-row justify-between items-start md:items-end mb-12 gap-4">
-                <div>
-                    <h2 class="text-3xl font-bold mb-4">Featured Work</h2>
-                    <p class="text-slate-600">A selection of stores and custom solutions I've built.</p>
-                </div>
-                <div class="text-xs font-bold text-slate-400 uppercase tracking-widest border-b border-slate-200 pb-1">
-                    Projects from Resume
-                </div>
+    <section id="projects" class="py-16 sm:py-24 px-4 sm:px-6 bg-[#f6f6f7]">
+        <div class="max-w-7xl mx-auto">
+            <div class="mb-10 sm:mb-16 text-center sm:text-left">
+                <h2 class="text-2xl sm:text-3xl font-bold mb-4">Merchant Portfolio</h2>
+                <div class="h-1 w-20 bg-emerald-600 rounded mx-auto sm:mx-0"></div>
             </div>
 
-            <!-- Auto-piling Grid -->
-            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-                
-                <!-- Puregold -->
-                <div class="project-card bg-white rounded-2xl overflow-hidden border border-slate-100 p-8">
-                    <div class="flex flex-col flex-grow">
-                        <span class="text-xs font-bold text-indigo-600 uppercase tracking-widest">Enterprise build</span>
-                        <h3 class="text-xl font-bold mt-2 mb-3">Puregold Shopping</h3>
-                        <p class="text-sm text-slate-600 mb-6 flex-grow">Built the initial shopping website for one of the largest supermarket chains in the Philippines. Tailored custom themes and responsive features.</p>
-                        <div class="flex justify-between items-center mt-auto">
-                            <div class="flex gap-1">
-                                <span class="text-[10px] font-bold bg-slate-100 text-slate-600 px-2 py-1 rounded">Shopify Plus</span>
-                            </div>
-                        </div>
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 sm:gap-8">
+                <!-- Dermalogica -->
+                <div class="polaris-card p-6 sm:p-8 flex flex-col group">
+                    <div class="mb-4 sm:mb-6 flex justify-between items-start">
+                        <span class="text-[10px] font-black uppercase tracking-widest text-indigo-900 bg-indigo-50 px-2 py-1 rounded">Skincare Authority</span>
                     </div>
-                </div>
-
-                <!-- Seido Knives -->
-                <div class="project-card bg-white rounded-2xl overflow-hidden border border-slate-100 p-8">
-                    <div class="flex flex-col flex-grow">
-                        <span class="text-xs font-bold text-indigo-600 uppercase tracking-widest">Main Developer</span>
-                        <h3 class="text-xl font-bold mt-2 mb-3">Seido Knives</h3>
-                        <p class="text-sm text-slate-600 mb-6 flex-grow">Managed frontend experience and modified theme files to create custom premium solutions and speed optimization.</p>
-                        <div class="flex justify-between items-center mt-auto">
-                            <div class="flex gap-1"><span class="text-[10px] font-bold bg-slate-100 text-slate-600 px-2 py-1 rounded">Liquid</span></div>
-                            <a href="https://seldoknives.com" target="_blank" class="text-indigo-600 text-xs font-bold hover:underline">Visit Site <i class="fas fa-external-link-alt ml-1"></i></a>
-                        </div>
+                    <h3 class="text-lg sm:text-xl font-bold mb-3 sm:mb-4">Dermalogica</h3>
+                    <p class="text-slate-600 text-sm mb-6 sm:mb-8 leading-relaxed flex-grow">
+                        Developed high-performance theme solutions and custom frontend features for a leading global skincare brand.
+                    </p>
+                    <div class="mb-4">
+                        <button onclick="openResponsibilities('dermalogica')" class="text-[11px] font-bold text-indigo-600 hover:text-indigo-800 flex items-center gap-1 uppercase tracking-wider transition-colors">
+                            <i class="fas fa-list-check"></i> Responsibilities
+                        </button>
+                    </div>
+                    <div class="pt-4 sm:pt-6 border-t border-slate-100 flex justify-between items-center">
+                        <span class="text-[10px] font-bold text-slate-400 uppercase">Liquid / UX</span>
+                        <a href="https://www.dermalogica.com" target="_blank" class="text-emerald-700 text-xs font-bold">Launch <i class="fas fa-arrow-right ml-1"></i></a>
                     </div>
                 </div>
 
                 <!-- UltraFootball AU -->
-                <div class="project-card bg-white rounded-2xl overflow-hidden border border-slate-100 p-8">
-                    <div class="flex flex-col flex-grow">
-                        <span class="text-xs font-bold text-indigo-600 uppercase tracking-widest">Ecomm Specialist</span>
-                        <h3 class="text-xl font-bold mt-2 mb-3">UltraFootball</h3>
-                        <p class="text-sm text-slate-600 mb-6 flex-grow">Spearheaded frontend development, executed theme customizations, and optimized performance for a top sports brand.</p>
-                        <div class="flex justify-between items-center mt-auto">
-                            <div class="flex gap-1"><span class="text-[10px] font-bold bg-slate-100 text-slate-600 px-2 py-1 rounded">Theme Dev</span></div>
-                            <a href="https://ultrafootball.com" target="_blank" class="text-indigo-600 text-xs font-bold hover:underline">Visit Site <i class="fas fa-external-link-alt ml-1"></i></a>
-                        </div>
+                <div class="polaris-card p-6 sm:p-8 flex flex-col group">
+                    <div class="mb-4 sm:mb-6">
+                        <span class="text-[10px] font-black uppercase tracking-widest text-emerald-900 bg-emerald-50 px-2 py-1 rounded">Sports Retail</span>
+                    </div>
+                    <h3 class="text-lg sm:text-xl font-bold mb-3 sm:mb-4">UltraFootball AU</h3>
+                    <p class="text-slate-600 text-sm mb-6 sm:mb-8 leading-relaxed flex-grow">
+                        Spearheaded frontend development and complex theme customizations for Australia's premier football retailer.
+                    </p>
+                    <div class="mb-4">
+                        <button onclick="openResponsibilities('ultrafootball')" class="text-[11px] font-bold text-indigo-600 hover:text-indigo-800 flex items-center gap-1 uppercase tracking-wider transition-colors">
+                            <i class="fas fa-list-check"></i> Responsibilities
+                        </button>
+                    </div>
+                    <div class="pt-4 sm:pt-6 border-t border-slate-100 flex justify-between items-center">
+                        <span class="text-[10px] font-bold text-slate-400 uppercase">Performance</span>
+                        <a href="https://www.ultrafootball.com" target="_blank" class="text-emerald-700 text-xs font-bold">Launch <i class="fas fa-arrow-right ml-1"></i></a>
                     </div>
                 </div>
 
-                <!-- Inaru -->
-                <div class="project-card bg-white rounded-2xl overflow-hidden border border-slate-100 p-8">
-                    <div class="flex flex-col flex-grow">
-                        <span class="text-xs font-bold text-indigo-600 uppercase tracking-widest">Sole Developer</span>
-                        <h3 class="text-xl font-bold mt-2 mb-3">Inaru</h3>
-                        <p class="text-sm text-slate-600 mb-6 flex-grow">Sole developer for custom solutions and troubleshooting, resulting in optimized speed and storefront performance.</p>
-                        <div class="flex justify-between items-center mt-auto">
-                            <div class="flex gap-1"><span class="text-[10px] font-bold bg-slate-100 text-slate-600 px-2 py-1 rounded">Speed Fix</span></div>
-                            <a href="https://inaru.com" target="_blank" class="text-indigo-600 text-xs font-bold hover:underline">Visit Site <i class="fas fa-external-link-alt ml-1"></i></a>
-                        </div>
+                <!-- Puregold -->
+                <div class="polaris-card p-6 sm:p-8 flex flex-col group">
+                    <div class="mb-4 sm:mb-6">
+                        <span class="text-[10px] font-black uppercase tracking-widest text-indigo-900 bg-indigo-50 px-2 py-1 rounded">Enterprise Build</span>
+                    </div>
+                    <h3 class="text-lg sm:text-xl font-bold mb-3 sm:mb-4">Puregold</h3>
+                    <p class="text-slate-600 text-sm mb-6 sm:mb-8 leading-relaxed flex-grow">
+                        Architected the initial digital experience for one of the largest supermarket chains in the Philippines.
+                    </p>
+                    <div class="mb-4">
+                        <button onclick="openResponsibilities('puregold')" class="text-[11px] font-bold text-indigo-600 hover:text-indigo-800 flex items-center gap-1 uppercase tracking-wider transition-colors">
+                            <i class="fas fa-list-check"></i> Responsibilities
+                        </button>
+                    </div>
+                    <div class="pt-4 sm:pt-6 border-t border-slate-100 flex items-center justify-between">
+                        <span class="text-[10px] font-bold text-slate-400 uppercase">Plus Readiness</span>
+                    </div>
+                </div>
+
+                <!-- Seido Knives -->
+                <div class="polaris-card p-6 sm:p-8 flex flex-col group">
+                    <div class="mb-4 sm:mb-6">
+                        <span class="text-[10px] font-black uppercase tracking-widest text-emerald-900 bg-emerald-50 px-2 py-1 rounded">UX & Performance</span>
+                    </div>
+                    <h3 class="text-lg sm:text-xl font-bold mb-3 sm:mb-4">Seido Knives</h3>
+                    <p class="text-slate-600 text-sm mb-6 sm:mb-8 leading-relaxed flex-grow">
+                        Managed frontend architecture and deep theme customization for premium culinary tools.
+                    </p>
+                    <div class="mb-4">
+                        <button onclick="openResponsibilities('seido')" class="text-[11px] font-bold text-indigo-600 hover:text-indigo-800 flex items-center gap-1 uppercase tracking-wider transition-colors">
+                            <i class="fas fa-list-check"></i> Responsibilities
+                        </button>
+                    </div>
+                    <div class="pt-4 sm:pt-6 border-t border-slate-100 flex justify-between items-center">
+                        <span class="text-[10px] font-bold text-slate-400 uppercase">Theme Dev</span>
+                        <a href="https://seldoknives.com" target="_blank" class="text-emerald-700 text-xs font-bold">Launch <i class="fas fa-arrow-right ml-1"></i></a>
                     </div>
                 </div>
 
                 <!-- Vision Express -->
-                <div class="project-card bg-white rounded-2xl overflow-hidden border border-slate-100 p-8">
-                    <div class="flex flex-col flex-grow">
-                        <span class="text-xs font-bold text-indigo-600 uppercase tracking-widest">Contractor</span>
-                        <h3 class="text-xl font-bold mt-2 mb-3">Vision Express / BLI.ph</h3>
-                        <p class="text-sm text-slate-600 mb-6 flex-grow">Main developer for the initial storefront launches. Managed frontend theme files and performance optimization.</p>
-                        <div class="flex justify-between items-center mt-auto">
-                            <div class="flex gap-1"><span class="text-[10px] font-bold bg-slate-100 text-slate-600 px-2 py-1 rounded">Custom Theme</span></div>
-                            <a href="https://visionexpress.com" target="_blank" class="text-indigo-600 text-xs font-bold hover:underline">Visit Site <i class="fas fa-external-link-alt ml-1"></i></a>
-                        </div>
+                <div class="polaris-card p-6 sm:p-8 flex flex-col group">
+                    <div class="mb-4 sm:mb-6">
+                        <span class="text-[10px] font-black uppercase tracking-widest text-slate-600 bg-slate-100 px-2 py-1 rounded">Initial Launch</span>
+                    </div>
+                    <h3 class="text-lg sm:text-xl font-bold mb-3 sm:mb-4">Vision Express</h3>
+                    <p class="text-slate-600 text-sm mb-6 sm:mb-8 leading-relaxed flex-grow">
+                        Lead developer for initial storefront launches. Optimized theme files for visual clarity.
+                    </p>
+                    <div class="mb-4">
+                        <button onclick="openResponsibilities('vision')" class="text-[11px] font-bold text-indigo-600 hover:text-indigo-800 flex items-center gap-1 uppercase tracking-wider transition-colors">
+                            <i class="fas fa-list-check"></i> Responsibilities
+                        </button>
+                    </div>
+                    <div class="pt-4 sm:pt-6 border-t border-slate-100 flex justify-between items-center">
+                        <span class="text-[10px] font-bold text-slate-400 uppercase">Architecture</span>
+                        <a href="https://visionexpress.com" target="_blank" class="text-emerald-700 text-xs font-bold">Launch <i class="fas fa-arrow-right ml-1"></i></a>
                     </div>
                 </div>
 
-                <!-- Somnifix -->
-                <div class="project-card bg-white rounded-2xl overflow-hidden border border-slate-100 p-8">
-                    <div class="flex flex-col flex-grow">
-                        <span class="text-xs font-bold text-indigo-600 uppercase tracking-widest">Frontend Developer</span>
-                        <h3 class="text-xl font-bold mt-2 mb-3">Somnifix</h3>
-                        <p class="text-sm text-slate-600 mb-6 flex-grow">Frontend development focusing on custom theme solutions and resolving technical speed issues.</p>
-                        <div class="flex justify-between items-center mt-auto">
-                            <div class="flex gap-1"><span class="text-[10px] font-bold bg-slate-100 text-slate-600 px-2 py-1 rounded">Optimization</span></div>
-                            <a href="https://somnifix.com" target="_blank" class="text-indigo-600 text-xs font-bold hover:underline">Visit Site <i class="fas fa-external-link-alt ml-1"></i></a>
-                        </div>
+                <!-- Inaru -->
+                <div class="polaris-card p-6 sm:p-8 flex flex-col group">
+                    <div class="mb-4 sm:mb-6">
+                        <span class="text-[10px] font-black uppercase tracking-widest text-emerald-900 bg-emerald-50 px-2 py-1 rounded">Sole Dev</span>
+                    </div>
+                    <h3 class="text-lg sm:text-xl font-bold mb-3 sm:mb-4">Inaru</h3>
+                    <p class="text-slate-600 text-sm mb-6 sm:mb-8 leading-relaxed flex-grow">
+                        Provided end-to-end development, from initial theme customization to complex troubleshooting.
+                    </p>
+                    <div class="mb-4">
+                        <button onclick="openResponsibilities('inaru')" class="text-[11px] font-bold text-indigo-600 hover:text-indigo-800 flex items-center gap-1 uppercase tracking-wider transition-colors">
+                            <i class="fas fa-list-check"></i> Responsibilities
+                        </button>
+                    </div>
+                    <div class="pt-4 sm:pt-6 border-t border-slate-100 flex justify-between items-center">
+                        <span class="text-[10px] font-bold text-slate-400 uppercase">Full-Stack</span>
+                        <a href="https://inaru.com" target="_blank" class="text-emerald-700 text-xs font-bold">Launch <i class="fas fa-arrow-right ml-1"></i></a>
                     </div>
                 </div>
-
-                <!-- Kazecheese -->
-                <div class="project-card bg-white rounded-2xl overflow-hidden border border-slate-100 p-8">
-                    <div class="flex flex-col flex-grow">
-                        <span class="text-xs font-bold text-indigo-600 uppercase tracking-widest">Senior Developer</span>
-                        <h3 class="text-xl font-bold mt-2 mb-3">Kazecheese</h3>
-                        <p class="text-sm text-slate-600 mb-6 flex-grow">Managed the online store's frontend experience and developed customized solutions for specific business needs.</p>
-                        <div class="flex justify-between items-center mt-auto">
-                            <div class="flex gap-1"><span class="text-[10px] font-bold bg-slate-100 text-slate-600 px-2 py-1 rounded">Solutions</span></div>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- Sttoke -->
-                <div class="project-card bg-white rounded-2xl overflow-hidden border border-slate-100 p-8">
-                    <div class="flex flex-col flex-grow">
-                        <span class="text-xs font-bold text-indigo-600 uppercase tracking-widest">Landing Page</span>
-                        <h3 class="text-xl font-bold mt-2 mb-3">Sttoke</h3>
-                        <p class="text-sm text-slate-600 mb-6 flex-grow">Developed engaging high-converting landing pages tailored to specific marketing and brand strategies.</p>
-                        <div class="flex justify-between items-center mt-auto">
-                            <div class="flex gap-1"><span class="text-[10px] font-bold bg-slate-100 text-slate-600 px-2 py-1 rounded">Conversion</span></div>
-                            <a href="https://sttoke.com" target="_blank" class="text-indigo-600 text-xs font-bold hover:underline">Visit Site <i class="fas fa-external-link-alt ml-1"></i></a>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- SkinGym.co -->
-                <div class="project-card bg-white rounded-2xl overflow-hidden border border-slate-100 p-8">
-                    <div class="flex flex-col flex-grow">
-                        <span class="text-xs font-bold text-indigo-600 uppercase tracking-widest">Landing Page</span>
-                        <h3 class="text-xl font-bold mt-2 mb-3">SkinGym</h3>
-                        <p class="text-sm text-slate-600 mb-6 flex-grow">Contributed to high-converting landing page development for a premium skincare brand.</p>
-                        <div class="flex justify-between items-center mt-auto">
-                            <div class="flex gap-1"><span class="text-[10px] font-bold bg-slate-100 text-slate-600 px-2 py-1 rounded">UI Design</span></div>
-                            <a href="https://skingym.co" target="_blank" class="text-indigo-600 text-xs font-bold hover:underline">Visit Site <i class="fas fa-external-link-alt ml-1"></i></a>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- PrimeChoiceClub.com -->
-                <div class="project-card bg-white rounded-2xl overflow-hidden border border-slate-100 p-8">
-                    <div class="flex flex-col flex-grow">
-                        <span class="text-xs font-bold text-indigo-600 uppercase tracking-widest">Landing Page</span>
-                        <h3 class="text-xl font-bold mt-2 mb-3">Prime Choice Club</h3>
-                        <p class="text-sm text-slate-600 mb-6 flex-grow">Developed effective landing pages designed to drive traffic and increase customer retention.</p>
-                        <div class="flex justify-between items-center mt-auto">
-                            <div class="flex gap-1"><span class="text-[10px] font-bold bg-slate-100 text-slate-600 px-2 py-1 rounded">Marketing</span></div>
-                            <a href="https://primechoiceclub.com" target="_blank" class="text-indigo-600 text-xs font-bold hover:underline">Visit Site <i class="fas fa-external-link-alt ml-1"></i></a>
-                        </div>
-                    </div>
-                </div>
-
             </div>
         </div>
     </section>
 
-    <!-- Skills Section -->
-    <section id="skills" class="py-24 px-6">
-        <div class="max-w-6xl mx-auto grid md:grid-cols-2 gap-16">
+    <!-- Arsenal (Skills) -->
+    <section id="skills" class="py-20 sm:py-32 px-4 sm:px-6">
+        <div class="max-w-7xl mx-auto grid lg:grid-cols-2 gap-12 lg:gap-20">
             <div>
-                <h2 class="text-3xl font-bold mb-6">Technical Arsenal</h2>
-                <p class="text-slate-600 mb-8">Expertise honed over a decade of high-stakes e-commerce development.</p>
-                <div class="grid grid-cols-2 gap-4">
-                    <div class="p-4 border border-slate-100 rounded-xl">
-                        <div class="text-indigo-600 mb-2"><i class="fas fa-droplet"></i></div>
-                        <h4 class="font-bold mb-1 text-sm">Shopify Liquid</h4>
-                        <p class="text-xs text-slate-500">Theme architecture & custom logic</p>
+                <h2 class="text-3xl sm:text-4xl font-bold mb-6 sm:mb-8 text-center lg:text-left">Specialized Merchant Stack</h2>
+                <p class="text-slate-600 text-lg mb-10 sm:mb-12 text-center lg:text-left">Building scalable retail assets using the best of the Shopify ecosystem.</p>
+                
+                <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 sm:gap-6">
+                    <div class="p-6 bg-slate-50 rounded-xl border border-slate-100">
+                        <div class="w-10 h-10 bg-white rounded-lg flex items-center justify-center shadow-sm mb-4 text-orange-500">
+                            <i class="fas fa-fire-alt"></i>
+                        </div>
+                        <h4 class="font-bold mb-2 text-sm">Shopify Liquid</h4>
+                        <p class="text-[11px] text-slate-500">Theme architecture, meta-objects, and schema logic.</p>
                     </div>
-                    <div class="p-4 border border-slate-100 rounded-xl">
-                        <div class="text-indigo-600 mb-2"><i class="fas fa-bolt"></i></div>
-                        <h4 class="font-bold mb-1 text-sm">Performance</h4>
-                        <p class="text-xs text-slate-500">Core Web Vitals & Speed</p>
+                    <div class="p-6 bg-slate-50 rounded-xl border border-slate-100">
+                        <div class="w-10 h-10 bg-white rounded-lg flex items-center justify-center shadow-sm mb-4 text-emerald-500">
+                            <i class="fas fa-tachometer-alt"></i>
+                        </div>
+                        <h4 class="font-bold mb-2 text-sm">Performance</h4>
+                        <p class="text-[11px] text-slate-500">Maximizing Lighthouse scores and conversion metrics.</p>
                     </div>
-                    <div class="p-4 border border-slate-100 rounded-xl">
-                        <div class="text-indigo-600 mb-2"><i class="fas fa-code-branch"></i></div>
-                        <h4 class="font-bold mb-1 text-sm">Shopify API</h4>
-                        <p class="text-xs text-slate-500">Third-party integrations</p>
+                    <div class="p-6 bg-slate-50 rounded-xl border border-slate-100">
+                        <div class="w-10 h-10 bg-white rounded-lg flex items-center justify-center shadow-sm mb-4 text-indigo-500">
+                            <i class="fas fa-plug"></i>
+                        </div>
+                        <h4 class="font-bold mb-2 text-sm">API Integrations</h4>
+                        <p class="text-[11px] text-slate-500">Connecting ERPs, CRMs, and custom Shopify apps.</p>
                     </div>
-                    <div class="p-4 border border-slate-100 rounded-xl">
-                        <div class="text-indigo-600 mb-2"><i class="fas fa-mobile-screen"></i></div>
-                        <h4 class="font-bold mb-1 text-sm">Responsive</h4>
-                        <p class="text-xs text-slate-500">Mobile-first experiences</p>
+                    <div class="p-6 bg-slate-50 rounded-xl border border-slate-100">
+                        <div class="w-10 h-10 bg-white rounded-lg flex items-center justify-center shadow-sm mb-4 text-slate-700">
+                            <i class="fas fa-layer-group"></i>
+                        </div>
+                        <h4 class="font-bold mb-2 text-sm">UI Engineering</h4>
+                        <p class="text-[11px] text-slate-500">Responsive, accessible, and high-fidelity frontends.</p>
                     </div>
                 </div>
             </div>
-            <div class="flex flex-col justify-center">
-                <h3 class="text-xl font-bold mb-6">Skills & Tools</h3>
-                <div class="flex flex-wrap gap-3">
-                    <span class="skill-tag px-4 py-2 rounded-lg text-sm font-medium">Shopify Plus</span>
-                    <span class="skill-tag px-4 py-2 rounded-lg text-sm font-medium">Shopify Liquid</span>
-                    <span class="skill-tag px-4 py-2 rounded-lg text-sm font-medium">JavaScript / jQuery</span>
-                    <span class="skill-tag px-4 py-2 rounded-lg text-sm font-medium">HTML5 / CSS3</span>
-                    <span class="skill-tag px-4 py-2 rounded-lg text-sm font-medium">Sass</span>
-                    <span class="skill-tag px-4 py-2 rounded-lg text-sm font-medium">Git / GitHub</span>
-                    <span class="skill-tag px-4 py-2 rounded-lg text-sm font-medium">SEO Strategy</span>
-                    <span class="skill-tag px-4 py-2 rounded-lg text-sm font-medium">Payment Integration</span>
+
+            <div class="bg-[#f6f6f7] rounded-3xl p-6 sm:p-10 flex flex-col justify-center">
+                <h3 class="text-xl font-bold mb-6 sm:mb-8">Developer Core</h3>
+                <div class="flex flex-wrap gap-2 sm:gap-3">
+                    <span class="bg-white px-3 sm:px-5 py-2 sm:py-3 rounded-lg sm:rounded-xl text-[11px] sm:text-sm font-semibold border border-slate-200 shadow-sm">Shopify Plus</span>
+                    <span class="bg-white px-3 sm:px-5 py-2 sm:py-3 rounded-lg sm:rounded-xl text-[11px] sm:text-sm font-semibold border border-slate-200 shadow-sm">Shopify Liquid</span>
+                    <span class="bg-white px-3 sm:px-5 py-2 sm:py-3 rounded-lg sm:rounded-xl text-[11px] sm:text-sm font-semibold border border-slate-200 shadow-sm">HTML</span>
+                    <span class="bg-white px-3 sm:px-5 py-2 sm:py-3 rounded-lg sm:rounded-xl text-[11px] sm:text-sm font-semibold border border-slate-200 shadow-sm">CSS</span>
+                    <span class="bg-white px-3 sm:px-5 py-2 sm:py-3 rounded-lg sm:rounded-xl text-[11px] sm:text-sm font-semibold border border-slate-200 shadow-sm">Vanilla Javascript</span>
+                </div>
+                <div class="mt-8 sm:mt-12 p-4 sm:p-6 bg-white rounded-2xl border border-slate-200 flex items-center gap-4">
+                    <div class="text-emerald-600 text-xl"><i class="fas fa-briefcase"></i></div>
+                    <div>
+                        <div class="font-bold text-sm sm:text-base text-slate-900">Verified Shopify Expert</div>
+                        <div class="text-[10px] text-slate-500 uppercase tracking-widest">Global Independent Contractor</div>
+                    </div>
                 </div>
             </div>
         </div>
     </section>
 
-    <!-- Experience Timeline -->
-    <section id="experience" class="py-24 px-6 bg-slate-900 text-white">
+    <!-- History -->
+    <section id="experience" class="py-20 sm:py-32 px-4 sm:px-6 bg-slate-900 text-white">
         <div class="max-w-4xl mx-auto">
-            <h2 class="text-3xl font-bold mb-16 text-center">Work History</h2>
-            <div class="space-y-12">
-                <div class="flex flex-col md:flex-row gap-6">
-                    <div class="md:w-1/4"><span class="text-slate-400 font-mono">2025</span></div>
-                    <div class="md:w-3/4 pb-12 border-l border-slate-700 pl-8 relative">
-                        <div class="absolute w-3 h-3 bg-indigo-500 rounded-full -left-[6px] top-1"></div>
-                        <h3 class="text-xl font-bold">MultiplyMii</h3>
-                        <p class="text-indigo-400 mb-4">Shopify Developer (Part-time)</p>
-                        <ul class="text-slate-400 text-sm space-y-2 leading-relaxed">
-                            <li>• Developed custom Shopify themes to enhance user experience.</li>
-                            <li>• Integrated third-party apps using Shopify's API.</li>
+            <h2 class="text-2xl sm:text-3xl font-bold mb-12 sm:mb-20 text-center">A Decade of Professional Delivery</h2>
+            <div class="space-y-12 sm:space-y-16">
+                <div class="grid md:grid-cols-4 gap-4 md:gap-8 group">
+                    <div class="text-slate-500 font-mono text-sm pt-1">2025</div>
+                    <div class="md:col-span-3">
+                        <h3 class="text-xl sm:text-2xl font-bold group-hover:text-emerald-400 transition mb-2">MultiplyMii</h3>
+                        <p class="text-emerald-500 font-medium mb-4 sm:mb-6 text-sm sm:text-base">Senior Shopify Developer (Contract)</p>
+                        <ul class="text-slate-400 space-y-3 text-sm leading-relaxed">
+                            <li>• Developing custom Shopify experiences to drive conversion lift.</li>
+                            <li>• Strategic API integrations for inventory and marketing flow.</li>
                         </ul>
                     </div>
                 </div>
-                <div class="flex flex-col md:flex-row gap-6">
-                    <div class="md:w-1/4"><span class="text-slate-400 font-mono">2023 - 2024</span></div>
-                    <div class="md:w-3/4 pb-12 border-l border-slate-700 pl-8 relative">
-                        <div class="absolute w-3 h-3 bg-indigo-500 rounded-full -left-[6px] top-1"></div>
-                        <h3 class="text-xl font-bold">INARU</h3>
-                        <p class="text-indigo-400 mb-4">Freelance Shopify Developer - Contractor</p>
-                    </div>
-                </div>
-                <div class="flex flex-col md:flex-row gap-6">
-                    <div class="md:w-1/4"><span class="text-slate-400 font-mono">2014 - Present</span></div>
-                    <div class="md:w-3/4 pl-8 relative">
-                        <div class="absolute w-3 h-3 bg-indigo-500 rounded-full -left-[6px] top-1"></div>
-                        <h3 class="text-xl font-bold">Freelance Shopify Developer</h3>
-                        <p class="text-indigo-400 mb-4">Global Contractor</p>
+
+                <div class="grid md:grid-cols-4 gap-4 md:gap-8 group">
+                    <div class="text-slate-500 font-mono text-sm pt-1">2014 — Present</div>
+                    <div class="md:col-span-3">
+                        <h3 class="text-xl sm:text-2xl font-bold group-hover:text-emerald-400 transition mb-2">Freelance Shopify Developer</h3>
+                        <p class="text-emerald-500 font-medium mb-4 sm:mb-6 text-sm sm:text-base">Solutions Specialist</p>
+                        <p class="text-slate-400 text-sm leading-relaxed">
+                            Serving 50+ merchants globally. Primary focus on Shopify Plus migrations, custom theme engineering, and performance audits for US, UK, and Australian brands.
+                        </p>
                     </div>
                 </div>
             </div>
         </div>
     </section>
 
-    <!-- Contact CTA -->
-    <section class="py-24 px-6 bg-indigo-600">
-        <div class="max-w-4xl mx-auto text-center text-white">
-            <h2 class="text-4xl font-bold mb-6 text-white">Ready to scale your store?</h2>
-            <a href="mailto:manarangarchie@gmail.com" class="bg-white text-indigo-600 px-10 py-4 rounded-xl font-bold hover:bg-slate-50 transition inline-flex items-center gap-2 shadow-xl shadow-indigo-900/20">
-                <i class="fas fa-envelope"></i> manarangarchie@gmail.com
-            </a>
+    <!-- Call to Action -->
+    <section class="py-16 sm:py-32 px-4 sm:px-6 bg-white text-center">
+        <div class="max-w-4xl mx-auto polaris-card p-8 sm:p-12 lg:p-20 bg-emerald-50 border-emerald-100 overflow-hidden relative">
+            <div class="absolute -top-10 -right-10 w-40 h-40 bg-emerald-100/50 rounded-full blur-3xl"></div>
+            <h2 class="text-2xl sm:text-4xl font-bold mb-4 sm:mb-8">Ready to scale your store?</h2>
+            <p class="text-slate-600 text-base sm:text-xl mb-8 sm:mb-12">Let’s discuss your project and build a high-conversion asset.</p>
+            <div class="flex flex-col sm:flex-row justify-center gap-4 sm:gap-6">
+                <a href="mailto:manarangarchie@gmail.com" class="btn-shopify px-8 py-4 sm:px-10 sm:py-5 rounded-xl font-bold text-base sm:text-lg shadow-xl shadow-emerald-900/10 text-center">
+                    Send Email
+                </a>
+                <a href="https://www.upwork.com/freelancers/archiemanarang4" target="_blank" class="bg-white border border-slate-200 px-8 py-4 sm:px-10 sm:py-5 rounded-xl font-bold text-base sm:text-lg hover:bg-slate-50 transition flex items-center justify-center gap-2">
+                    <i class="fab fa-upwork text-[#14a800]"></i> Upwork Profile
+                </a>
+            </div>
         </div>
     </section>
 
+    <!-- Responsibility Modal -->
+    <div id="responsibility-modal" class="modal">
+        <div class="modal-content polaris-card">
+            <div class="p-6 sm:p-8 border-b border-slate-100 flex justify-between items-center bg-slate-50 sticky top-0 rounded-t-xl z-10">
+                <div>
+                    <h4 id="modal-project-name" class="text-xl font-bold text-slate-900">Project Responsibilities</h4>
+                    <p class="text-xs text-slate-500 font-medium uppercase tracking-widest mt-1">Core Deliverables & Actions</p>
+                </div>
+                <button onclick="closeModal()" class="text-slate-400 hover:text-slate-600 text-2xl">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+            <div id="modal-body" class="p-6 sm:p-8">
+                <!-- Content injected via JS -->
+            </div>
+            <div class="p-6 bg-slate-50 border-t border-slate-100 flex justify-end sticky bottom-0 rounded-b-xl">
+                <button onclick="closeModal()" class="px-6 py-2 bg-indigo-900 text-white rounded-lg font-bold text-sm">Close Detail</button>
+            </div>
+        </div>
+    </div>
+
     <!-- Footer -->
-    <footer class="py-12 px-6 bg-white border-t border-slate-100">
-        <div class="max-w-6xl mx-auto flex flex-col md:flex-row justify-between items-center gap-6">
-            <div class="text-lg font-bold">ARCHIE<span class="text-indigo-600">.</span></div>
-            <div class="text-slate-500 text-sm text-center">© 2025 Archie Manarang. Mexico, Pampanga.</div>
+    <footer class="py-12 px-4 sm:px-6 border-t border-slate-100 bg-white">
+        <div class="max-w-7xl mx-auto flex flex-col md:flex-row justify-between items-center text-slate-400 text-[10px] sm:text-xs gap-6 text-center">
+            <div class="font-bold text-slate-900 text-sm">ARCHIE MANARANG<span class="text-emerald-600">.</span></div>
+            <div>Pampanga, Philippines | Professional Shopify Solutions</div>
+            <div class="flex items-center gap-6 text-base">
+                <a href="https://www.upwork.com/freelancers/archiemanarang4" target="_blank" class="hover:text-slate-900 transition"><i class="fab fa-upwork"></i></a>
+                <a href="#" class="hover:text-slate-900 transition"><i class="fab fa-linkedin"></i></a>
+                <a href="#" class="hover:text-slate-900 transition"><i class="fab fa-github"></i></a>
+            </div>
         </div>
     </footer>
 
     <script>
+        // Automatic Logo Detection
+        function checkLogo() {
+            const logoImg = document.getElementById('custom-logo');
+            const fallback = document.getElementById('logo-fallback');
+            
+            const tester = new Image();
+            tester.onload = function() {
+                logoImg.classList.remove('hidden');
+                fallback.classList.add('hidden');
+            };
+            tester.onerror = function() {
+                // Try SVG if PNG fails
+                const svgTester = new Image();
+                svgTester.onload = function() {
+                    logoImg.src = 'logo.svg';
+                    logoImg.classList.remove('hidden');
+                    fallback.classList.add('hidden');
+                };
+                svgTester.src = 'logo.svg';
+            };
+            tester.src = 'logo.png';
+        }
+        checkLogo();
+
+        // Modal Data Mapping
+        const projectData = {
+            dermalogica: {
+                name: 'Dermalogica',
+                items: [
+                    'Developed high-performance theme solutions to maintain premium brand identity.',
+                    'Optimized mobile user interface for seamless skincare consultation flow.',
+                    'Integrated specialized third-party apps for advanced product recommendations.',
+                    'Conducted rigorous cross-device testing to ensure flawless checkout processes.',
+                    'Collaborated on Liquid-based custom frontend features for dynamic product displays.'
+                ]
+            },
+            ultrafootball: {
+                name: 'UltraFootball AU',
+                items: [
+                    'Spearheaded frontend architecture modifications for heavy-traffic sports retail.',
+                    'Executed complex Shopify Liquid customizations for dynamic team kit options.',
+                    'Optimized site speed and performance for peak promotional events.',
+                    'Integrated specialized inventory and team-wear management logic.',
+                    'Refined the responsive checkout process to boost mobile conversion rates.'
+                ]
+            },
+            puregold: {
+                name: 'Puregold',
+                items: [
+                    'Architected the initial shopping website for the supermarket chain from the ground up.',
+                    'Implemented complex Shopify Plus features for large-scale grocery SKU management.',
+                    'Customized theme logic to handle varied regional delivery and pickup rules.',
+                    'Developed robust frontend components using HTML, CSS, and Vanilla JavaScript.',
+                    'Ensured enterprise-grade site stability and high store uptime.'
+                ]
+            },
+            seido: {
+                name: 'Seido Knives',
+                items: [
+                    'Managed frontend experience design for premium product storytelling.',
+                    'Modified Shopify theme files to create a custom high-end culinary aesthetic.',
+                    'Resolved UX bottlenecks and improved navigation for a conversion-focused store.',
+                    'Implemented custom metadata and meta-object structures for detailed technical specs.',
+                    'Delivered SEO optimizations to improve organic visibility in the luxury segment.'
+                ]
+            },
+            vision: {
+                name: 'Vision Express',
+                items: [
+                    'Main developer for the initial storefront launches and brand setup.',
+                    'Translated business vision into functional and visually sharp eye-wear categories.',
+                    'Developed complex filtering systems for lens and frame variations.',
+                    'Provided continuous technical support and maintenance through the launch phase.',
+                    'Optimized e-commerce assets for high-resolution retina displays.'
+                ]
+            },
+            inaru: {
+                name: 'Inaru',
+                items: [
+                    'Sole developer responsible for end-to-end theme customization and debugging.',
+                    'Developed custom Liquid solutions for a unique brand-storytelling experience.',
+                    'Managed technical troubleshooting for existing Shopify app conflicts.',
+                    'Ensured 100% mobile responsiveness across all unique product layouts.',
+                    'Delivered ongoing site maintenance and speed optimization patches.'
+                ]
+            }
+        };
+
+        function openResponsibilities(id) {
+            const project = projectData[id];
+            if (!project) return;
+
+            document.getElementById('modal-project-name').innerText = project.name;
+            const body = document.getElementById('modal-body');
+            
+            let listHtml = '<ul class="space-y-4">';
+            project.items.forEach(item => {
+                listHtml += `
+                    <li class="flex items-start gap-3">
+                        <span class="mt-1 flex-shrink-0 w-5 h-5 rounded-full bg-emerald-50 flex items-center justify-center">
+                            <i class="fas fa-check text-[10px] text-emerald-600"></i>
+                        </span>
+                        <p class="text-sm text-slate-600 leading-relaxed">${item}</p>
+                    </li>
+                `;
+            });
+            listHtml += '</ul>';
+            
+            body.innerHTML = listHtml;
+            document.getElementById('responsibility-modal').classList.add('active');
+            document.body.style.overflow = 'hidden';
+        }
+
+        function closeModal() {
+            document.getElementById('responsibility-modal').classList.remove('active');
+            document.body.style.overflow = 'auto';
+        }
+
+        // Close modal on background click
+        window.onclick = function(event) {
+            const modal = document.getElementById('responsibility-modal');
+            if (event.target == modal) {
+                closeModal();
+            }
+        }
+
+        // Mobile Menu Toggle
+        const menuToggle = document.getElementById('menu-toggle');
+        const mobileMenu = document.getElementById('mobile-menu');
+        const mobileLinks = document.querySelectorAll('.mobile-nav-link');
+
+        menuToggle.addEventListener('click', () => {
+            mobileMenu.classList.toggle('hidden');
+            const icon = menuToggle.querySelector('i');
+            icon.classList.toggle('fa-bars');
+            icon.classList.toggle('fa-times');
+        });
+
+        mobileLinks.forEach(link => {
+            link.addEventListener('click', () => {
+                mobileMenu.classList.add('hidden');
+                menuToggle.querySelector('i').className = 'fas fa-bars text-xl';
+            });
+        });
+
+        // Scroll Spy Implementation
         const sections = document.querySelectorAll('section[id]');
         const navLinks = document.querySelectorAll('.nav-link');
 
         const observerOptions = {
             root: null,
-            rootMargin: '-80px 0px 0px 0px',
-            threshold: 0.3
+            rootMargin: '-100px 0px 0px 0px',
+            threshold: 0.2
         };
 
         const observer = new IntersectionObserver((entries) => {
