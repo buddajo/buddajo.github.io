@@ -137,15 +137,10 @@
     <!-- Navigation -->
     <nav class="fixed w-full z-50 glass-nav">
         <div class="max-w-7xl mx-auto px-4 sm:px-6 py-4 flex justify-between items-center">
-            <div class="flex items-center gap-2">
-                <!-- Logo with Robust Fallback Chain -->
-                <div id="brand-logo-container" class="relative w-8 h-8 overflow-hidden rounded-lg">
-                    <!-- Default Text A -->
-                    <div id="logo-fallback" class="w-8 h-8 bg-indigo-900 flex items-center justify-center text-white font-bold text-lg">A</div>
-                    <!-- Custom Logo -->
-                    <img id="custom-logo" src="logo.png" alt="Logo" class="absolute inset-0 w-full h-full object-contain hidden" 
-                        onload="this.classList.remove('hidden'); document.getElementById('logo-fallback').classList.add('hidden');"
-                        onerror="if(this.src.endsWith('.png')){this.src='logo.svg';} else if(this.src.endsWith('.svg')){this.src='logo.jpg';} else {this.classList.add('hidden');}">
+            <div class="flex items-center gap-4">
+                <!-- Large, Circled, Top-Center Focused Logo -->
+                <div id="brand-logo-container" class="relative z-10">
+                    <img id="custom-logo" src="logo.jpg" alt="Archie Manarang Logo" class="w-32 h-32 rounded-full object-cover object-top border-4 border-white shadow-lg">
                 </div>
                 <span class="text-base sm:text-lg font-semibold tracking-tight">Archie Manarang</span>
             </div>
