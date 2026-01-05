@@ -138,12 +138,14 @@
     <nav class="fixed w-full z-50 glass-nav">
         <div class="max-w-7xl mx-auto px-4 sm:px-6 py-4 flex justify-between items-center">
             <div class="flex items-center gap-2">
-                <!-- Logo with Conditional Fallback -->
-                <div id="brand-logo-container" class="relative w-8 h-8">
+                <!-- Logo with Robust Fallback Chain -->
+                <div id="brand-logo-container" class="relative w-8 h-8 overflow-hidden rounded-lg">
                     <!-- Default Text A -->
-                    <div id="logo-fallback" class="w-8 h-8 bg-indigo-900 rounded-lg flex items-center justify-center text-white font-bold text-lg">A</div>
-                    <!-- Real Logo (hidden by default) -->
-                    <img id="custom-logo" src="logo.png" alt="Archie" class="absolute inset-0 w-8 h-8 rounded-lg object-contain hidden">
+                    <div id="logo-fallback" class="w-8 h-8 bg-indigo-900 flex items-center justify-center text-white font-bold text-lg">A</div>
+                    <!-- Custom Logo -->
+                    <img id="custom-logo" src="logo.png" alt="Logo" class="absolute inset-0 w-full h-full object-contain hidden" 
+                        onload="this.classList.remove('hidden'); document.getElementById('logo-fallback').classList.add('hidden');"
+                        onerror="if(this.src.endsWith('.png')){this.src='logo.svg';} else if(this.src.endsWith('.svg')){this.src='logo.jpg';} else {this.classList.add('hidden');}">
                 </div>
                 <span class="text-base sm:text-lg font-semibold tracking-tight">Archie Manarang</span>
             </div>
@@ -527,30 +529,6 @@
     </footer>
 
     <script>
-        // Automatic Logo Detection
-        function checkLogo() {
-            const logoImg = document.getElementById('custom-logo');
-            const fallback = document.getElementById('logo-fallback');
-            
-            const tester = new Image();
-            tester.onload = function() {
-                logoImg.classList.remove('hidden');
-                fallback.classList.add('hidden');
-            };
-            tester.onerror = function() {
-                // Try SVG if PNG fails
-                const svgTester = new Image();
-                svgTester.onload = function() {
-                    logoImg.src = 'logo.svg';
-                    logoImg.classList.remove('hidden');
-                    fallback.classList.add('hidden');
-                };
-                svgTester.src = 'logo.svg';
-            };
-            tester.src = 'logo.png';
-        }
-        checkLogo();
-
         // Modal Data Mapping
         const projectData = {
             dermalogica: {
